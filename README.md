@@ -35,37 +35,32 @@ Planner Agent      ← breaks question into sub-tasks
 Every step is **traced, logged, and observable** via the built-in dashboard.
 
 ---
-
 ## Architecture
+```mermaid
+flowchart TD
+    A([User Question]) --> B[FastAPI Gateway]
+    B --> C[Planner Agent\ndecomposes · routes]
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     FastAPI Gateway                          │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-        ┌─────────▼──────────┐
-        │   Planner Agent     │   (LangGraph orchestrator)
-        └─────────┬──────────┘
-                  │
-     ┌────────────┼────────────┐
-     ▼            ▼            ▼
- SQL Agent    RAG Agent   Python Agent
-     │            │            │
-  Postgres     FAISS/        Code
-  Snowflake    Pinecone     Executor
-     │            │            │
-     └────────────┴────────────┘
-                  │
-        ┌─────────▼──────────┐
-        │   Response Agent    │
-        └─────────┬──────────┘
-                  │
-        ┌─────────▼──────────┐
-        │   Observability     │   (traces, logs, metrics)
-        └────────────────────┘
+    C --> D[SQL Agent\ntext→SQL · execute]
+    C --> E[RAG Agent\nvector + keyword]
+    C --> F[Python Agent\nsandboxed code]
+
+    D --> G[(Postgres / Snowflake)]
+    E --> H[(FAISS / Pinecone)]
+    F --> I[(Python REPL)]
+
+    D --> J[Response Agent\nsynthesize · cite · score]
+    E --> J
+    F --> J
+
+    J --> K([Structured Response\nanswer · sources · confidence])
+
+    C <-.->|short + long term| M[(Memory)]
+
+    D & E & F & J -.->|logs · traces · spans| N[Observability\nStreamlit Dashboard]
 ```
 
----
+
 
 ## Core Features
 
