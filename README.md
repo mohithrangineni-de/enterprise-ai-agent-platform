@@ -39,26 +39,23 @@ Every step is **traced, logged, and observable** via the built-in dashboard.
 ```mermaid
 flowchart TD
     A([User Question]) --> B[FastAPI Gateway]
-    B --> C[Planner Agent\ndecomposes · routes]
-
-    C --> D[SQL Agent\ntext→SQL · execute]
-    C --> E[RAG Agent\nvector + keyword]
-    C --> F[Python Agent\nsandboxed code]
-
+    B --> C[Planner Agent]
+    C --> D[SQL Agent]
+    C --> E[RAG Agent]
+    C --> F[Python Agent]
     D --> G[(Postgres / Snowflake)]
     E --> H[(FAISS / Pinecone)]
     F --> I[(Python REPL)]
-
-    D --> J[Response Agent\nsynthesize · cite · score]
+    D --> J[Response Agent]
     E --> J
     F --> J
-
-    J --> K([Structured Response\nanswer · sources · confidence])
-
-    C <-.->|short + long term| M[(Memory)]
-
-    D & E & F & J -.->|logs · traces · spans| N[Observability\nStreamlit Dashboard]
+    J --> K([Structured Response])
+    C |memory| M[(Memory)]
+    D & E & F & J -.->|traces + logs| N[Observability Dashboard]
 ```
+
+---
+   
 
 
 
